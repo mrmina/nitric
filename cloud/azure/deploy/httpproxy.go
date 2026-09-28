@@ -140,7 +140,7 @@ func (p *NitricAzurePulumiProvider) Http(ctx *pulumi.Context, parent pulumi.Reso
 		return policy, nil
 	}).(pulumi.StringOutput)
 
-	for _, path := range spec.Paths {
+	for _, path := range spec.Paths.Map() {
 		for _, op := range path.Operations() {
 			_, err = apimanagement.NewApiOperationPolicy(ctx, ResourceName(ctx, name+"-"+op.OperationID, ApiOperationPolicyRT), &apimanagement.ApiOperationPolicyArgs{
 				ResourceGroupName: p.ResourceGroup.Name,
@@ -178,16 +178,14 @@ func newApiSpec(name string) *openapi3.T {
 		Components: &openapi3.Components{
 			SecuritySchemes: make(openapi3.SecuritySchemes),
 		},
-		Paths: openapi3.Paths{
-			"/*": &openapi3.PathItem{
-				Get:     getOperation("get"),
-				Post:    getOperation("post"),
-				Patch:   getOperation("patch"),
-				Put:     getOperation("put"),
-				Delete:  getOperation("delete"),
-				Options: getOperation("options"),
-			},
-		},
+		Paths: openapi3.NewPaths(openapi3.WithPath("/*", &openapi3.PathItem{
+			Get:     getOperation("get"),
+			Post:    getOperation("post"),
+			Patch:   getOperation("patch"),
+			Put:     getOperation("put"),
+			Delete:  getOperation("delete"),
+			Options: getOperation("options"),
+		})),
 	}
 
 	return doc
@@ -198,12 +196,8 @@ func getOperation(operationId string) *openapi3.Operation {
 
 	return &openapi3.Operation{
 		OperationID: operationId,
-		Responses: openapi3.Responses{
-			"default": &openapi3.ResponseRef{
-				Value: &openapi3.Response{
-					Description: &defaultDescription,
-				},
-			},
-		},
+		Responses: openapi3.NewResponses(openapi3.WithName("default", &openapi3.Response{
+			Description: &defaultDescription,
+		})),
 	}
 }

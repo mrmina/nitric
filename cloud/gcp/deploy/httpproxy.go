@@ -117,16 +117,14 @@ func newApiSpec(name, functionUrl string) *openapi3.T {
 		Components: &openapi3.Components{
 			SecuritySchemes: make(openapi3.SecuritySchemes),
 		},
-		Paths: openapi3.Paths{
-			"/**": &openapi3.PathItem{
-				Get:     getOperation(functionUrl, "get"),
-				Post:    getOperation(functionUrl, "post"),
-				Patch:   getOperation(functionUrl, "patch"),
-				Put:     getOperation(functionUrl, "put"),
-				Delete:  getOperation(functionUrl, "delete"),
-				Options: getOperation(functionUrl, "options"),
-			},
-		},
+		Paths: openapi3.NewPaths(openapi3.WithPath("/**", &openapi3.PathItem{
+			Get:     getOperation(functionUrl, "get"),
+			Post:    getOperation(functionUrl, "post"),
+			Patch:   getOperation(functionUrl, "patch"),
+			Put:     getOperation(functionUrl, "put"),
+			Delete:  getOperation(functionUrl, "delete"),
+			Options: getOperation(functionUrl, "options"),
+		})),
 	}
 
 	return doc
@@ -137,13 +135,9 @@ func getOperation(functionUrl string, operationId string) *openapi3.Operation {
 
 	return &openapi3.Operation{
 		OperationID: operationId,
-		Responses: openapi3.Responses{
-			"default": &openapi3.ResponseRef{
-				Value: &openapi3.Response{
-					Description: &defaultDescription,
-				},
-			},
-		},
+		Responses: openapi3.NewResponses(openapi3.WithName("default", &openapi3.Response{
+			Description: &defaultDescription,
+		})),
 		Extensions: map[string]interface{}{
 			"x-google-backend": map[string]string{
 				"address":          functionUrl,

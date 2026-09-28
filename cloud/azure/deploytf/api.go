@@ -70,7 +70,7 @@ func (n *NitricAzureTerraformProvider) Api(stack cdktf.TerraformStack, name stri
 		return fmt.Errorf("invalid document supplied for api: %s", name)
 	}
 
-	if len(openapiDoc.Paths) < 1 {
+	if openapiDoc.Paths.Len() < 1 {
 		logger.Warnf("skipping deployment of API %s, no routes defined", name)
 		return nil
 	}
@@ -110,7 +110,7 @@ func (n *NitricAzureTerraformProvider) Api(stack cdktf.TerraformStack, name stri
 
 	dependsOnServices := map[string]cdktf.ITerraformDependable{}
 
-	for _, pathItem := range openapiDoc.Paths {
+	for _, pathItem := range openapiDoc.Paths.Map() {
 		for _, op := range pathItem.Operations() {
 			if v, ok := op.Extensions["x-nitric-target"]; ok {
 				var jwtTemplates []string

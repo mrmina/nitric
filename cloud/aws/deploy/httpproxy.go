@@ -88,16 +88,14 @@ func newApiSpec(name, invokeArn string, tags map[string]string) *openapi3.T {
 		Components: &openapi3.Components{
 			SecuritySchemes: make(openapi3.SecuritySchemes),
 		},
-		Paths: openapi3.Paths{
-			"/{proxy+}": &openapi3.PathItem{
-				Get:     getOperation(invokeArn, "get"),
-				Post:    getOperation(invokeArn, "post"),
-				Patch:   getOperation(invokeArn, "patch"),
-				Put:     getOperation(invokeArn, "put"),
-				Delete:  getOperation(invokeArn, "delete"),
-				Options: getOperation(invokeArn, "options"),
-			},
-		},
+		Paths: openapi3.NewPaths(openapi3.WithPath("/{proxy+}", &openapi3.PathItem{
+			Get:     getOperation(invokeArn, "get"),
+			Post:    getOperation(invokeArn, "post"),
+			Patch:   getOperation(invokeArn, "patch"),
+			Put:     getOperation(invokeArn, "put"),
+			Delete:  getOperation(invokeArn, "delete"),
+			Options: getOperation(invokeArn, "options"),
+		})),
 	}
 
 	for n, v := range tags {
@@ -115,13 +113,9 @@ func getOperation(invokeArn string, operationId string) *openapi3.Operation {
 
 	return &openapi3.Operation{
 		OperationID: operationId,
-		Responses: openapi3.Responses{
-			"default": &openapi3.ResponseRef{
-				Value: &openapi3.Response{
-					Description: &defaultDescription,
-				},
-			},
-		},
+		Responses: openapi3.NewResponses(openapi3.WithName("default", &openapi3.Response{
+			Description: &defaultDescription,
+		})),
 		Extensions: map[string]interface{}{
 			"x-amazon-apigateway-integration": map[string]string{
 				"type":                 "aws_proxy",

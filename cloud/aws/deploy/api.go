@@ -111,7 +111,7 @@ func (a *NitricAwsPulumiProvider) Api(ctx *pulumi.Context, parent pulumi.Resourc
 	}
 
 	nitricServiceTargets := map[string]*lambda.Function{}
-	for _, p := range openapiDoc.Paths {
+	for _, p := range openapiDoc.Paths.Map() {
 		for _, op := range p.Operations() {
 			if v, ok := op.Extensions["x-nitric-target"]; ok {
 				if targetMap, isMap := v.(map[string]any); isMap {
@@ -166,14 +166,14 @@ func (a *NitricAwsPulumiProvider) Api(ctx *pulumi.Context, parent pulumi.Resourc
 			}
 		}
 
-		for k, p := range openapiDoc.Paths {
+		for k, p := range openapiDoc.Paths.Map() {
 			p.Get = awsOperation(p.Get, naps)
 			p.Post = awsOperation(p.Post, naps)
 			p.Patch = awsOperation(p.Patch, naps)
 			p.Put = awsOperation(p.Put, naps)
 			p.Delete = awsOperation(p.Delete, naps)
 			p.Options = awsOperation(p.Options, naps)
-			openapiDoc.Paths[k] = p
+			openapiDoc.Paths.Set(k, p)
 		}
 
 		// Important: AWS will use these on the first deployment, but not subsequent updates
