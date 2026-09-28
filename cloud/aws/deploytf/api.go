@@ -99,7 +99,7 @@ func (n *NitricAwsTerraformProvider) Api(stack cdktf.TerraformStack, name string
 	}
 
 	nitricServiceTargets := map[string]service.Service{}
-	for _, apiPath := range openapiDoc.Paths {
+	for _, apiPath := range openapiDoc.Paths.Map() {
 		for _, pathOperation := range apiPath.Operations() {
 			if apiNitricTarget, ok := pathOperation.Extensions["x-nitric-target"]; ok {
 				if targetMap, isMap := apiNitricTarget.(map[string]any); isMap {
@@ -128,14 +128,14 @@ func (n *NitricAwsTerraformProvider) Api(stack cdktf.TerraformStack, name string
 		targetNames[k] = v.LambdaFunctionNameOutput()
 	}
 
-	for k, p := range openapiDoc.Paths {
+	for k, p := range openapiDoc.Paths.Map() {
 		p.Get = awsOperation(p.Get, nameArnPairs)
 		p.Post = awsOperation(p.Post, nameArnPairs)
 		p.Patch = awsOperation(p.Patch, nameArnPairs)
 		p.Put = awsOperation(p.Put, nameArnPairs)
 		p.Delete = awsOperation(p.Delete, nameArnPairs)
 		p.Options = awsOperation(p.Options, nameArnPairs)
-		openapiDoc.Paths[k] = p
+		openapiDoc.Paths.Set(k, p)
 	}
 
 	// TODO: Use common tags method and ensure it works with pointer templating

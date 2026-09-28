@@ -1,8 +1,6 @@
 module github.com/nitrictech/nitric/cloud/aws
 
-go 1.23.1
-
-toolchain go1.24.0
+go 1.25
 
 tool github.com/uw-labs/lichen
 
@@ -30,7 +28,7 @@ require (
 	github.com/aws/smithy-go v1.22.2
 	github.com/cdktf/cdktf-provider-aws-go/aws/v19 v19.54.0
 	github.com/cdktf/cdktf-provider-docker-go/docker/v11 v11.0.0
-	github.com/getkin/kin-openapi v0.113.0
+	github.com/getkin/kin-openapi v0.144.0
 	github.com/golang/mock v1.6.0
 	github.com/golangci/golangci-lint v1.61.0
 	github.com/google/addlicense v1.1.1
@@ -167,7 +165,7 @@ require (
 	github.com/go-git/go-git/v5 v5.13.1 // indirect
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-openapi/jsonpointer v0.19.5 // indirect
+	github.com/go-openapi/jsonpointer v0.22.5 // indirect
 	github.com/go-openapi/swag v0.22.3 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/go-toolsmith/astcast v1.1.0 // indirect

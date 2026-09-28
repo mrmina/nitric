@@ -80,7 +80,7 @@ func (p *NitricAzurePulumiProvider) Api(ctx *pulumi.Context, parent pulumi.Resou
 		return fmt.Errorf("invalid document supplied for api: %s", name)
 	}
 
-	if len(openapiDoc.Paths) < 1 {
+	if openapiDoc.Paths.Len() < 1 {
 		logger.Warnf("skipping deployment of API %s, no routes defined", name)
 		return nil
 	}
@@ -192,11 +192,11 @@ func (p *NitricAzurePulumiProvider) Api(ctx *pulumi.Context, parent pulumi.Resou
 		}
 	}
 
-	if len(openapiDoc.Paths) < 1 {
+	if openapiDoc.Paths.Len() < 1 {
 		return fmt.Errorf("no paths defined in api: %s", name)
 	}
 
-	for _, pathItem := range openapiDoc.Paths {
+	for _, pathItem := range openapiDoc.Paths.Map() {
 		for _, op := range pathItem.Operations() {
 			if v, ok := op.Extensions["x-nitric-target"]; ok {
 				var jwtTemplates []string
